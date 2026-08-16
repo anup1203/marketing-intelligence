@@ -1,16 +1,62 @@
+import joblib
 import pandas as pd
 import streamlit as st
-import joblib
 
 # ============================================================
-# PAGE CONFIG
+# PAGE CONFIG & THEME STYLING
 # ============================================================
 
 st.set_page_config(
     page_title="Marketing Intelligence",
-    page_icon="📊",
     layout="wide"
 )
+
+# Custom color palette (Indigo/Slate Modern Theme)
+st.markdown("""
+<style>
+    /* Dark Base Background */
+    .stApp {
+        background-color: #0b0b0b !important;
+    }
+    
+    /* Sidebar - Pure Dark */
+    section[data-testid="stSidebar"] {
+        background-color: #121212 !important;
+        border-right: 1px solid #27272a !important;
+    }
+    
+    /* Metric Cards - Minimal Red/White */
+    div[data-testid="stMetric"] {
+        background-color: #161619 !important;
+        border: 1px solid #2e2e2e !important;
+        border-left: 3px solid #ffffff !important;
+        padding: 14px 18px !important;
+        border-radius: 6px !important;
+    }
+    
+    /* Metric Labels (Subtitle/Category) */
+    div[data-testid="stMetricLabel"] > div,
+    div[data-testid="stMetricLabel"] label,
+    div[data-testid="stMetricLabel"] p {
+        color: #a1a1aa !important;
+        font-weight: 500 !important;
+        font-size: 0.82rem !important;
+        letter-spacing: 0.3px;
+    }
+    
+    /* Metric Values (Main Numbers/Text) */
+    div[data-testid="stMetricValue"] > div {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+
+    /* Headings - Crisp White */
+    h1, h2, h3, h4, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: #f4f4f5 !important;
+        font-weight: 600 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 
 # ============================================================
@@ -23,6 +69,8 @@ def load_data():
 
 
 df = load_data()
+
+
 @st.cache_resource
 def load_model():
     return joblib.load("models/performance_model.pkl")
@@ -35,7 +83,7 @@ model = load_model()
 # HEADER
 # ============================================================
 
-st.title("📊 Marketing Intelligence Dashboard")
+st.title("Marketing Intelligence Dashboard")
 
 st.write(
     "Data-driven analysis and campaign recommendations "
@@ -47,7 +95,7 @@ st.write(
 # SIDEBAR FILTERS
 # ============================================================
 
-st.sidebar.header("🎯 Campaign Filters")
+st.sidebar.header("Campaign Filters")
 
 industry = st.sidebar.selectbox(
     "Select Industry",
@@ -71,7 +119,6 @@ filtered_df = df[
 
 
 if filtered_df.empty:
-
     st.warning("No data available for this selection.")
 
 else:
@@ -128,130 +175,94 @@ else:
     # RECOMMENDED STRATEGY
     # ========================================================
 
-    st.subheader("🎯 Recommended Marketing Strategy")
+    st.subheader("Recommended Marketing Strategy")
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric(
-            "Content Type",
-            best_content_type
-        )
+        st.metric("Content Type", best_content_type)
 
     with col2:
-        st.metric(
-            "Content Topic",
-            best_content_topic
-        )
+        st.metric("Content Topic", best_content_topic)
 
     with col3:
-        st.metric(
-            "Best Day",
-            best_posting_day
-        )
+        st.metric("Best Day", best_posting_day)
 
     with col4:
+        st.metric("Best Time", best_posting_time)
+
+
+    # ========================================================
+    # ML PERFORMANCE PREDICTION
+    # ========================================================
+
+    st.subheader("ML Performance Prediction")
+
+    prediction_data = filtered_df.copy()
+
+    if not prediction_data.empty:
+        prediction_row = prediction_data.iloc[0:1].copy()
+        predicted_score = model.predict(prediction_row)[0]
+
         st.metric(
-            "Best Time",
-            best_posting_time
+            "Predicted Performance Score",
+            f"{predicted_score:.2f}"
         )
 
-# ========================================================
-# ML PERFORMANCE PREDICTION
-# ========================================================
+        if predicted_score >= 75:
+            st.success("High-performing campaign predicted!")
 
-st.subheader("🤖 ML Performance Prediction")
+        elif predicted_score >= 65:
+            st.info("Average-to-good campaign performance predicted.")
 
-prediction_data = filtered_df.copy()
+        else:
+            st.warning("Low campaign performance predicted.")
 
-if not prediction_data.empty:
 
-    prediction_row = prediction_data.iloc[0:1].copy()
-
-    predicted_score = model.predict(prediction_row)[0]
-
-    st.metric(
-        "Predicted Performance Score",
-        f"{predicted_score:.2f}"
-    )
-
-    if predicted_score >= 75:
-        st.success(
-            "🔥 High-performing campaign predicted!"
-        )
-    elif predicted_score >= 65:
-        st.info(
-            "👍 Average-to-good campaign performance predicted."
-        )
-    else:
-        st.warning(
-            "⚠️ Low campaign performance predicted."
-        )
     # ========================================================
     # KPI SECTION
     # ========================================================
 
-    st.subheader("📈 Campaign Performance")
+    st.subheader("Campaign Performance")
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric(
-            "Performance Score",
-            f"{avg_performance:.2f}"
-        )
+        st.metric("Performance Score", f"{avg_performance:.2f}")
 
     with col2:
-        st.metric(
-            "Engagement Rate",
-            f"{avg_engagement:.2f}%"
-        )
+        st.metric("Engagement Rate", f"{avg_engagement:.2f}%")
 
     with col3:
-        st.metric(
-            "CTR",
-            f"{avg_ctr:.2f}%"
-        )
+        st.metric("CTR", f"{avg_ctr:.2f}%")
 
     with col4:
-        st.metric(
-            "ROAS",
-            f"{avg_roas:.2f}"
-        )
+        st.metric("ROAS", f"{avg_roas:.2f}")
 
 
     # ========================================================
     # BUSINESS KPIs
     # ========================================================
 
-    st.subheader("💰 Business Metrics")
+    st.subheader("Business Metrics")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric(
-            "Total Revenue",
-            f"₹{total_revenue:,.0f}"
-        )
+        st.metric("Total Revenue", f"₹{total_revenue:,.0f}")
 
     with col2:
-        st.metric(
-            "Total Ad Spend",
-            f"₹{total_spend:,.0f}"
-        )
+        st.metric("Total Ad Spend", f"₹{total_spend:,.0f}")
 
     with col3:
-        st.metric(
-            "Total Leads",
-            f"{total_leads:,}"
-        )
+        st.metric("Total Leads", f"{total_leads:,}")
 
 
     # ========================================================
     # CONTENT TYPE ANALYSIS
     # ========================================================
 
-    st.subheader("📊 Content Type Performance")
+    st.subheader("Content Type Performance")
 
     content_chart = (
         filtered_df.groupby("Content_Type")
@@ -261,15 +272,10 @@ if not prediction_data.empty:
             CTR=("CTR", "mean"),
             ROAS=("ROAS", "mean")
         )
-        .sort_values(
-            "Performance_Score",
-            ascending=False
-        )
+        .sort_values("Performance_Score", ascending=False)
     )
 
-    st.bar_chart(
-        content_chart["Performance_Score"]
-    )
+    st.bar_chart(content_chart["Performance_Score"])
 
     st.dataframe(
         content_chart.round(2),
@@ -281,7 +287,7 @@ if not prediction_data.empty:
     # TOPIC ANALYSIS
     # ========================================================
 
-    st.subheader("📢 Content Topic Performance")
+    st.subheader("Content Topic Performance")
 
     topic_chart = (
         filtered_df.groupby("Content_Topic")["Performance_Score"]
@@ -296,7 +302,7 @@ if not prediction_data.empty:
     # POSTING DAY ANALYSIS
     # ========================================================
 
-    st.subheader("📅 Posting Day Performance")
+    st.subheader("Posting Day Performance")
 
     day_chart = (
         filtered_df.groupby("Posting_Day")["Performance_Score"]
@@ -311,7 +317,7 @@ if not prediction_data.empty:
     # POSTING TIME ANALYSIS
     # ========================================================
 
-    st.subheader("⏰ Posting Time Performance")
+    st.subheader("Posting Time Performance")
 
     time_chart = (
         filtered_df.groupby("Posting_Time")["Performance_Score"]
@@ -326,7 +332,7 @@ if not prediction_data.empty:
     # ROI / ROAS ANALYSIS
     # ========================================================
 
-    st.subheader("💰 ROI & ROAS Analysis")
+    st.subheader("ROI & ROAS Analysis")
 
     roi_analysis = (
         filtered_df.groupby("Content_Type")
@@ -349,13 +355,10 @@ if not prediction_data.empty:
     # TOP PERFORMING CAMPAIGNS
     # ========================================================
 
-    st.subheader("🏆 Top Performing Campaigns")
+    st.subheader("Top Performing Campaigns")
 
     top_campaigns = (
-        filtered_df.sort_values(
-            "Performance_Score",
-            ascending=False
-        )
+        filtered_df.sort_values("Performance_Score", ascending=False)
         [
             [
                 "Client",
@@ -383,8 +386,7 @@ if not prediction_data.empty:
     # DATASET PREVIEW
     # ========================================================
 
-    with st.expander("🔍 View Filtered Dataset"):
-
+    with st.expander("View Filtered Dataset"):
         st.dataframe(
             filtered_df,
             use_container_width=True,
