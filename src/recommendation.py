@@ -1,16 +1,8 @@
 import pandas as pd
-
-
-# ============================================================
 # 1. LOAD FEATURE-ENGINEERED DATASET
-# ============================================================
 
 df = pd.read_csv("data/marketing_data_features.csv")
-
-
-# ============================================================
 # 2. SHOW AVAILABLE OPTIONS
-# ============================================================
 
 print("\n" + "=" * 60)
 print("MARKETING RECOMMENDATION ENGINE")
@@ -22,28 +14,17 @@ print(df["Industry"].unique())
 print("\nAvailable Platforms:")
 print(df["Platform"].unique())
 
-
-# ============================================================
 # 3. USER INPUT
-# ============================================================
 
 industry = input("\nEnter Industry: ").strip()
 platform = input("Enter Platform: ").strip()
-
-
-# ============================================================
 # 4. FILTER DATA
-# ============================================================
 
 filtered_df = df[
     (df["Industry"].str.lower() == industry.lower()) &
     (df["Platform"].str.lower() == platform.lower())
 ]
-
-
-# ============================================================
 # 5. CHECK IF DATA EXISTS
-# ============================================================
 
 if filtered_df.empty:
 
@@ -54,10 +35,8 @@ if filtered_df.empty:
     print("\nPlease enter an Industry and Platform from the available options.")
 
 else:
-
-    # ========================================================
-    # 6. FIND BEST CONTENT TYPE
-    # ========================================================
+# 6. FIND BEST CONTENT TYPE
+   
 
     best_content = (
         filtered_df.groupby("Content_Type")
@@ -73,9 +52,8 @@ else:
     best_content_type = best_content.index[0]
 
 
-    # ========================================================
     # 7. FIND BEST CONTENT TOPIC
-    # ========================================================
+
 
     best_topic = (
         filtered_df.groupby("Content_Topic")
@@ -90,10 +68,8 @@ else:
 
     best_content_topic = best_topic.index[0]
 
+# 8. FIND BEST POSTING DAY
 
-    # ========================================================
-    # 8. FIND BEST POSTING DAY
-    # ========================================================
 
     best_day = (
         filtered_df.groupby("Posting_Day")["Performance_Score"]
@@ -103,10 +79,8 @@ else:
 
     best_posting_day = best_day.index[0]
 
+# 9. FIND BEST POSTING TIME
 
-    # ========================================================
-    # 9. FIND BEST POSTING TIME
-    # ========================================================
 
     best_time = (
         filtered_df.groupby("Posting_Time")["Performance_Score"]
@@ -115,11 +89,7 @@ else:
     )
 
     best_posting_time = best_time.index[0]
-
-
-    # ========================================================
-    # 10. GET EXPECTED PERFORMANCE METRICS
-    # ========================================================
+# 10. GET EXPECTED PERFORMANCE METRICS
 
     recommended_data = filtered_df[
         (filtered_df["Content_Type"] == best_content_type) &
@@ -142,9 +112,8 @@ else:
     expected_roas = recommended_data["ROAS"].mean()
 
 
-    # ========================================================
-    # 11. DISPLAY RECOMMENDATION
-    # ========================================================
+# 11. DISPLAY RECOMMENDATION
+
 
     print("\n" + "=" * 60)
     print("RECOMMENDED MARKETING STRATEGY")
@@ -165,9 +134,8 @@ else:
     print(f"ROAS              : {expected_roas:.2f}")
 
 
-    # ========================================================
-    # 12. SHOW TOP CONTENT TYPES
-    # ========================================================
+# 12. SHOW TOP CONTENT TYPES
+
 
     print("\n" + "=" * 60)
     print("TOP CONTENT TYPES FOR THIS SELECTION")
@@ -176,9 +144,8 @@ else:
     print(best_content.round(2))
 
 
-    # ========================================================
-    # 13. SHOW TOP CONTENT TOPICS
-    # ========================================================
+# 13. SHOW TOP CONTENT TOPICS
+
 
     print("\n" + "=" * 60)
     print("TOP CONTENT TOPICS FOR THIS SELECTION")
@@ -186,10 +153,8 @@ else:
 
     print(best_topic.round(2))
 
+# 14. FINAL MESSAGE
 
-    # ========================================================
-    # 14. FINAL MESSAGE
-    # ========================================================
 
     print("\n" + "=" * 60)
     print("RECOMMENDATION GENERATED SUCCESSFULLY!")
