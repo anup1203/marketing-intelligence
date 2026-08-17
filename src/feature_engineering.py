@@ -1,16 +1,11 @@
 import pandas as pd
 
-
-# ============================================================
 # 1. LOAD DATASET
-# ============================================================
 
 df = pd.read_csv("data/marketing_data.csv")
 
-
-# ============================================================
 # 2. CREATE MARKETING FEATURES
-# ============================================================
+
 
 # Engagement Rate
 df["Engagement_Rate"] = (
@@ -46,10 +41,7 @@ df["ROAS"] = (
     / df["Ad_Spend"].replace(0, 1)
 )
 
-
-# ============================================================
 # 3. ROUND NEW FEATURES
-# ============================================================
 
 df["Engagement_Rate"] = df["Engagement_Rate"].round(2)
 df["CTR"] = df["CTR"].round(2)
@@ -57,10 +49,7 @@ df["Lead_Conversion_Rate"] = df["Lead_Conversion_Rate"].round(2)
 df["ROI"] = df["ROI"].round(2)
 df["ROAS"] = df["ROAS"].round(2)
 
-
-# ============================================================
 # 4. CHECK NEW DATASET
-# ============================================================
 
 print("\n" + "=" * 60)
 print("FEATURE ENGINEERING COMPLETED")
@@ -88,9 +77,7 @@ print("\nMissing Values:")
 print(df.isnull().sum())
 
 
-# ============================================================
 # 5. SAVE FEATURE-ENGINEERED DATASET
-# ============================================================
 
 df.to_csv("data/marketing_data_features.csv", index=False)
 
