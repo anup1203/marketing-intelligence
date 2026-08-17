@@ -2,16 +2,12 @@ import joblib
 import pandas as pd
 import streamlit as st
 
-# ============================================================
-# PAGE CONFIG & THEME STYLING
-# ============================================================
-
 st.set_page_config(
     page_title="Marketing Intelligence",
     layout="wide"
 )
 
-# Custom color palette (Indigo/Slate Modern Theme)
+# Custom color
 st.markdown("""
 <style>
     /* Dark Base Background */
@@ -58,10 +54,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-# ============================================================
 # LOAD DATA
-# ============================================================
 
 @st.cache_data
 def load_data():
@@ -78,10 +71,7 @@ def load_model():
 
 model = load_model()
 
-
-# ============================================================
 # HEADER
-# ============================================================
 
 st.title("Marketing Intelligence Dashboard")
 
@@ -90,10 +80,7 @@ st.write(
     "for better marketing performance."
 )
 
-
-# ============================================================
 # SIDEBAR FILTERS
-# ============================================================
 
 st.sidebar.header("Campaign Filters")
 
@@ -107,10 +94,7 @@ platform = st.sidebar.selectbox(
     sorted(df["Platform"].unique())
 )
 
-
-# ============================================================
 # FILTER DATA
-# ============================================================
 
 filtered_df = df[
     (df["Industry"] == industry) &
@@ -123,9 +107,8 @@ if filtered_df.empty:
 
 else:
 
-    # ========================================================
     # RECOMMENDATION LOGIC
-    # ========================================================
+
 
     best_content = (
         filtered_df.groupby("Content_Type")["Performance_Score"]
@@ -156,10 +139,7 @@ else:
     best_posting_day = best_day.index[0]
     best_posting_time = best_time.index[0]
 
-
-    # ========================================================
     # KPI VALUES
-    # ========================================================
 
     avg_performance = filtered_df["Performance_Score"].mean()
     avg_engagement = filtered_df["Engagement_Rate"].mean()
@@ -171,9 +151,7 @@ else:
     total_leads = filtered_df["Leads"].sum()
 
 
-    # ========================================================
     # RECOMMENDED STRATEGY
-    # ========================================================
 
     st.subheader("Recommended Marketing Strategy")
 
@@ -191,11 +169,7 @@ else:
     with col4:
         st.metric("Best Time", best_posting_time)
 
-
-    # ========================================================
     # ML PERFORMANCE PREDICTION
-    # ========================================================
-
     st.subheader("ML Performance Prediction")
 
     prediction_data = filtered_df.copy()
@@ -219,9 +193,7 @@ else:
             st.warning("Low campaign performance predicted.")
 
 
-    # ========================================================
     # KPI SECTION
-    # ========================================================
 
     st.subheader("Campaign Performance")
 
@@ -239,10 +211,7 @@ else:
     with col4:
         st.metric("ROAS", f"{avg_roas:.2f}")
 
-
-    # ========================================================
     # BUSINESS KPIs
-    # ========================================================
 
     st.subheader("Business Metrics")
 
@@ -258,9 +227,7 @@ else:
         st.metric("Total Leads", f"{total_leads:,}")
 
 
-    # ========================================================
     # CONTENT TYPE ANALYSIS
-    # ========================================================
 
     st.subheader("Content Type Performance")
 
@@ -282,10 +249,7 @@ else:
         use_container_width=True
     )
 
-
-    # ========================================================
     # TOPIC ANALYSIS
-    # ========================================================
 
     st.subheader("Content Topic Performance")
 
@@ -296,11 +260,7 @@ else:
     )
 
     st.bar_chart(topic_chart)
-
-
-    # ========================================================
     # POSTING DAY ANALYSIS
-    # ========================================================
 
     st.subheader("Posting Day Performance")
 
@@ -312,10 +272,7 @@ else:
 
     st.bar_chart(day_chart)
 
-
-    # ========================================================
     # POSTING TIME ANALYSIS
-    # ========================================================
 
     st.subheader("Posting Time Performance")
 
@@ -327,10 +284,7 @@ else:
 
     st.bar_chart(time_chart)
 
-
-    # ========================================================
     # ROI / ROAS ANALYSIS
-    # ========================================================
 
     st.subheader("ROI & ROAS Analysis")
 
@@ -350,10 +304,7 @@ else:
         use_container_width=True
     )
 
-
-    # ========================================================
     # TOP PERFORMING CAMPAIGNS
-    # ========================================================
 
     st.subheader("Top Performing Campaigns")
 
@@ -382,9 +333,7 @@ else:
     )
 
 
-    # ========================================================
     # DATASET PREVIEW
-    # ========================================================
 
     with st.expander("View Filtered Dataset"):
         st.dataframe(
@@ -394,9 +343,7 @@ else:
         )
 
 
-# ============================================================
 # FOOTER
-# ============================================================
 
 st.markdown("---")
 
