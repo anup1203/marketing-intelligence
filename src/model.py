@@ -9,9 +9,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
-# ============================================================
 # 1. LOAD DATASET
-# ============================================================
 
 df = pd.read_csv("data/marketing_data_features.csv")
 
@@ -21,21 +19,14 @@ print("=" * 60)
 
 print("\nDataset Shape:")
 print(df.shape)
-
-
-# ============================================================
 # 2. DEFINE TARGET
-# ============================================================
 
 target = "Performance_Score"
 
 X = df.drop(columns=[target])
 y = df[target]
 
-
-# ============================================================
 # 3. CATEGORICAL & NUMERICAL FEATURES
-# ============================================================
 
 categorical_features = [
     "Client",
@@ -67,10 +58,7 @@ numerical_features = [
     "ROAS"
 ]
 
-
-# ============================================================
 # 4. PREPROCESSING
-# ============================================================
 
 preprocessor = ColumnTransformer(
     transformers=[
@@ -83,20 +71,13 @@ preprocessor = ColumnTransformer(
     remainder="passthrough"
 )
 
-
-# ============================================================
 # 5. MODEL
-# ============================================================
 
 model = RandomForestRegressor(
     n_estimators=200,
     random_state=42
 )
-
-
-# ============================================================
 # 6. PIPELINE
-# ============================================================
 
 pipeline = Pipeline(
     steps=[
@@ -105,10 +86,7 @@ pipeline = Pipeline(
     ]
 )
 
-
-# ============================================================
 # 7. TRAIN TEST SPLIT
-# ============================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
@@ -117,10 +95,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-
-# ============================================================
 # 8. TRAIN MODEL
-# ============================================================
 
 print("\nTraining model...")
 
@@ -128,17 +103,11 @@ pipeline.fit(X_train, y_train)
 
 print("Model training completed!")
 
-
-# ============================================================
 # 9. PREDICTION
-# ============================================================
-
 y_pred = pipeline.predict(X_test)
 
 
-# ============================================================
 # 10. MODEL EVALUATION
-# ============================================================
 
 mae = mean_absolute_error(y_test, y_pred)
 rmse = mean_squared_error(y_test, y_pred) ** 0.5
@@ -152,10 +121,7 @@ print(f"MAE  : {mae:.2f}")
 print(f"RMSE : {rmse:.2f}")
 print(f"R²   : {r2:.4f}")
 
-
-# ============================================================
 # 11. SAVE MODEL
-# ============================================================
 
 model_path = "models/performance_model.pkl"
 
